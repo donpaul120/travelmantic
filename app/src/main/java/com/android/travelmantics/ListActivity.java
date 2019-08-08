@@ -32,7 +32,7 @@ public class ListActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseReference;
     private ChildEventListener mChildListener;
 
-    private ArrayList<TravelDeal> travelDeals = new ArrayList<>();
+    private ArrayList<TravelDeal> travelDeals;
 
 
     private RvRowAdapter rvRowAdapter;
@@ -41,15 +41,12 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-
-        initViews();
-        registerChildEvent();
     }
 
     private void initViews() {
         //Views
         RecyclerView rvDealsRecycler = findViewById(R.id.rvDeals);
-
+        this.travelDeals = new ArrayList<>();
         this.rvRowAdapter = new RvRowAdapter(this, travelDeals);
         rvDealsRecycler.setAdapter(rvRowAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
@@ -143,6 +140,7 @@ public class ListActivity extends AppCompatActivity {
         FirebaseUtil.openFbReference("traveldeals", this);
         this.mFirebaseDatabase = FirebaseUtil.mFirebaseDatabase;
         this.mDatabaseReference = FirebaseUtil.mDatabaseReference;
+        registerChildEvent();
         this.mDatabaseReference.addChildEventListener(mChildListener);
     }
 
@@ -150,6 +148,7 @@ public class ListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         fetchData();
+        initViews();
         FirebaseUtil.attachListener();
     }
 

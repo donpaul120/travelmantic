@@ -30,7 +30,7 @@ public class FirebaseUtil {
     private static FirebaseAuth firebaseAuth;
     private static FirebaseAuth.AuthStateListener authStateListener;
 
-    private static FirebaseStorage firebaseStorage;
+    public static FirebaseStorage firebaseStorage;
     public static StorageReference storageReference;
 
     public static ArrayList<TravelDeal> mDeals;
@@ -61,6 +61,7 @@ public class FirebaseUtil {
                     }
                 }
             };
+            mDeals = new ArrayList<>();
             connectStorage();
         }
         mDatabaseReference = mFirebaseDatabase.getReference().child(ref);

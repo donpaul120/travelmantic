@@ -23,13 +23,13 @@ import com.android.travelmantics.utils.FirebaseUtil;
 import com.android.travelmantics.utils.ImageUtils;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 public class DealActivity extends AppCompatActivity {
 
@@ -110,7 +110,7 @@ public class DealActivity extends AppCompatActivity {
                         if (downloadUrl != null) {
                             travelDeal.setImageUrl(downloadUrl.toString());
                             travelDeal.setImageName(task.getResult().getPath());
-                            ImageUtils.loadImage(travelDeal.getImageUrl(), uploadImage,0,0);
+                            ImageUtils.loadImage(travelDeal.getImageUrl(), uploadImage, 0, 0);
                         }
                     }
                 }
@@ -174,10 +174,22 @@ public class DealActivity extends AppCompatActivity {
             Toast.makeText(this, "Please save deal before deleting", Toast.LENGTH_LONG).show();
             return;
         }
+
         this.mDatabaseReference.child(travelDeal.getId()).removeValue();
 
-        if(travelDeal.getImageName()!=null && !travelDeal.getImageName().isEmpty()){
-//            StorageReference picRef = FirebaseUtil.mFirebaseDatabase.getReference().child(travelDeal.getImageName());
+        if (travelDeal.getImageName() != null && !travelDeal.getImageName().isEmpty()) {
+            StorageReference picRef = FirebaseUtil.firebaseStorage.getReference().child(travelDeal.getImageName());
+            picRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.e("TAG", "Deleted Image");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("TAG", "Failed To Delete Image");
+                }
+            });
         }
     }
 
@@ -185,6 +197,7 @@ public class DealActivity extends AppCompatActivity {
         xTxtTitle.setEnabled(isEnabled);
         xTxtDescription.setEnabled(isEnabled);
         xTxtPrice.setEnabled(isEnabled);
+        btnImage.setEnabled(isEnabled);
     }
 
     private void backToList() {
